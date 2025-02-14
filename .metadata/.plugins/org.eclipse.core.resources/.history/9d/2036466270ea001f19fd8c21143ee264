@@ -1,0 +1,173 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
+public class UniqueStringGeneratorGUI extends JFrame {
+	private static final int STRING_LENGTH = 8;
+	private static final String CHAR_POOL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	private static final Random random = new Random();
+
+	private JTextField quantityField, blendingCountryField, yyField, targetCountryField, mmField, ddField, addressField;
+	private JTable resultTable;
+	private DefaultTableModel tableModel;
+	private String saveDirectory = "";
+
+	public UniqueStringGeneratorGUI() {
+		getContentPane().setBackground(new Color(255, 255, 255));
+		setBackground(new Color(255, 255, 255));
+		setTitle("SKU Generation Application");
+		setSize(910, 550);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().setLayout(null);
+
+		JLabel quantityLabel = new JLabel("Enter Quantity:");
+		quantityLabel.setBounds(40, 107, 150, 30);
+		getContentPane().add(quantityLabel);
+		quantityField = new JTextField();
+		quantityField.setBounds(200, 107, 200, 30);
+		getContentPane().add(quantityField);
+
+		JLabel blendingCountryLabel = new JLabel("Enter Blending Country:");
+		blendingCountryLabel.setBounds(40, 148, 150, 30);
+		getContentPane().add(blendingCountryLabel);
+		blendingCountryField = new JTextField();
+		blendingCountryField.setBounds(200, 148, 200, 30);
+		getContentPane().add(blendingCountryField);
+
+		JLabel yyLabel = new JLabel("Enter YY):");
+		yyLabel.setBounds(40, 189, 150, 30);
+		getContentPane().add(yyLabel);
+		yyField = new JTextField();
+		yyField.setBounds(200, 189, 200, 30);
+		getContentPane().add(yyField);
+
+		JLabel targetCountryLabel = new JLabel("Enter Target Country:");
+		targetCountryLabel.setBounds(480, 107, 150, 30);
+		getContentPane().add(targetCountryLabel);
+		targetCountryField = new JTextField();
+		targetCountryField.setBounds(640, 107, 200, 30);
+		getContentPane().add(targetCountryField);
+
+		JLabel mmLabel = new JLabel("Enter MM:");
+		mmLabel.setBounds(480, 148, 150, 30);
+		getContentPane().add(mmLabel);
+		mmField = new JTextField();
+		mmField.setBounds(640, 148, 200, 30);
+		getContentPane().add(mmField);
+
+		JLabel ddLabel = new JLabel("Enter DD:");
+		ddLabel.setBounds(480, 189, 150, 30);
+		getContentPane().add(ddLabel);
+		ddField = new JTextField();
+		ddField.setBounds(640, 189, 200, 30);
+		getContentPane().add(ddField);
+
+		JLabel addressLabel = new JLabel("Save Directory:");
+		addressLabel.setBounds(40, 230, 150, 30);
+		getContentPane().add(addressLabel);
+
+		addressField = new JTextField("Find address");
+		addressField.setBounds(200, 230, 200, 30);
+		addressField.setEditable(false);
+		getContentPane().add(addressField);
+
+		JButton searchButton = new JButton("Search");
+		searchButton.setBounds(434, 230, 100, 30);
+		searchButton.addActionListener(e -> chooseSaveDirectory());
+		getContentPane().add(searchButton);
+
+		JButton generateButton = new JButton("Generate SKU Codes");
+		generateButton.setBounds(640, 230, 200, 30);
+		generateButton.addActionListener(e -> generateSKUCodes());
+		getContentPane().add(generateButton);
+
+		tableModel = new DefaultTableModel(new Object[] { "No", "Blending Country", "YY [2]", "Target Country",
+				"MM [2]", "Random digit [8]", "DD [2]", "SKU Code" }, 0);
+		resultTable = new JTable(tableModel);
+		JScrollPane scrollPane = new JScrollPane(resultTable);
+		scrollPane.setBounds(40, 285, 800, 200);
+		getContentPane().add(scrollPane);
+		
+		JLabel lblNewLabel = new JLabel("GENERATION SKU CODE  APP");
+		lblNewLabel.setBounds(389, 47, 145, 14);
+		getContentPane().add(lblNewLabel);
+	}
+
+	private void chooseSaveDirectory() {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnValue = fileChooser.showOpenDialog(this);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File selectedDirectory = fileChooser.getSelectedFile();
+			saveDirectory = selectedDirectory.getAbsolutePath() + "/";
+			addressField.setText(saveDirectory);
+		}
+	}
+
+	private void generateSKUCodes() {
+		if (saveDirectory.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Please select a save directory before generating SKU codes.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		Set<String> uniqueStrings = new HashSet<>();
+		int quantity = Integer.parseInt(quantityField.getText().trim());
+		String blendingCountry = blendingCountryField.getText().trim();
+		String yy = yyField.getText().trim();
+		String targetCountry = String.format("%02d", Integer.parseInt(targetCountryField.getText().trim()));
+		String mm = String.format("%02d", Integer.parseInt(mmField.getText().trim()));
+		String dd = String.format("%02d", Integer.parseInt(ddField.getText().trim()));
+
+		tableModel.setRowCount(0);
+		int index = 1;
+
+		while (uniqueStrings.size() < quantity) {
+			String randomCode = generateRandomString();
+			String formattedCode = blendingCountry + yy + targetCountry + mm + randomCode + dd;
+
+			if (uniqueStrings.add(formattedCode)) {
+				tableModel.addRow(new Object[] { index++, blendingCountry, yy, targetCountry, mm, randomCode, dd,
+						formattedCode });
+			}
+		}
+
+		saveToFile(uniqueStrings);
+	}
+
+	private String generateRandomString() {
+		StringBuilder sb = new StringBuilder(STRING_LENGTH);
+		for (int i = 0; i < STRING_LENGTH; i++) {
+			sb.append(CHAR_POOL.charAt(random.nextInt(CHAR_POOL.length())));
+		}
+		return sb.toString();
+	}
+
+	private void saveToFile(Set<String> uniqueStrings) {
+		File file = new File(saveDirectory + "SKU_Codes.txt");
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+			for (String code : uniqueStrings) {
+				writer.write(code);
+				writer.newLine();
+			}
+			JOptionPane.showMessageDialog(this, "SKU codes saved successfully.", "Success",
+					JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "Error saving SKU codes to file.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(() -> {
+			UniqueStringGeneratorGUI gui = new UniqueStringGeneratorGUI();
+			gui.setVisible(true);
+		});
+	}
+}

@@ -1,9 +1,11 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
@@ -11,191 +13,207 @@ import java.util.Random;
 import java.util.Set;
 
 public class UniqueStringGeneratorGUI extends JFrame {
-    private static final int STRING_LENGTH = 8;
-    private static final String CHAR_POOL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final char[] REQUIRED_CHARS = {'0', 'O', 'I', '1', 'S', '5'};
-    private static final Random random = new Random();
+	private static final int STRING_LENGTH = 8;
+	private static final String CHAR_POOL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	private static final Random random = new Random();
 
-    private JTextField quantityField, blendingCountryField, yyField, targetCountryField, mmField, ddField;
-    private JTable resultTable;
-    private DefaultTableModel tableModel;
+	private JTextField quantityField, blendingCountryField, yyField, targetCountryField, mmField, ddField, addressField;
+	private JTable resultTable;
+	private DefaultTableModel tableModel;
+	private String saveDirectory = "";
 
-    public UniqueStringGeneratorGUI() {
-        setTitle("SKU Generation Application");
-        setSize(700, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setLayout(null);  // Using absolute positioning
+	public UniqueStringGeneratorGUI() {
+		getContentPane().setBackground(new Color(255, 255, 255));
+		setBackground(new Color(255, 255, 255));
+		setTitle("SKU Generation Application");
+		setSize(900, 550);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().setLayout(null);
+		
+		setResizable(false);
+        setLocationRelativeTo(null);
+		
+		setResizable(false);
+		setLocationRelativeTo(null);
+		JLabel quantityLabel = new JLabel("Enter Quantity:");
+		quantityLabel.setBounds(40, 107, 150, 30);
+		getContentPane().add(quantityLabel);
+		quantityField = new JTextField();
+		quantityField.setBounds(200, 107, 200, 30);
+		getContentPane().add(quantityField);
 
-        // Quantity label and field
-        JLabel quantityLabel = new JLabel("Enter Quantity:");
-        quantityLabel.setBounds(40, 20, 290, 30);
-        getContentPane().add(quantityLabel);
-        quantityField = new JTextField();
-        quantityField.setBounds(360, 20, 255, 30);
-        getContentPane().add(quantityField);
+		JLabel blendingCountryLabel = new JLabel("Enter Blending Country:");
+		blendingCountryLabel.setBounds(40, 148, 150, 30);
+		getContentPane().add(blendingCountryLabel);
+		blendingCountryField = new JTextField();
+		blendingCountryField.setBounds(200, 148, 200, 30);
+		getContentPane().add(blendingCountryField);
 
-        // Blending Country label and field
-        JLabel blendingCountryLabel = new JLabel("Enter Blending Country (1-9 characters, uppercase only):");
-        blendingCountryLabel.setBounds(40, 61, 290, 30);
-        getContentPane().add(blendingCountryLabel);
-        blendingCountryField = new JTextField();
-        blendingCountryField.setBounds(360, 61, 255, 30);
-        getContentPane().add(blendingCountryField);
+		JLabel yyLabel = new JLabel("Enter YY):");
+		yyLabel.setBounds(40, 189, 150, 30);
+		getContentPane().add(yyLabel);
+		yyField = new JTextField();
+		yyField.setBounds(200, 189, 200, 30);
+		getContentPane().add(yyField);
 
-        // YY label and field
-        JLabel yyLabel = new JLabel("Enter YY (25 to 99):");
-        yyLabel.setBounds(40, 100, 290, 30);
-        getContentPane().add(yyLabel);
-        yyField = new JTextField();
-        yyField.setBounds(360, 100, 255, 30);
-        getContentPane().add(yyField);
+		JLabel targetCountryLabel = new JLabel("Enter Target Country:");
+		targetCountryLabel.setBounds(480, 107, 150, 30);
+		getContentPane().add(targetCountryLabel);
+		targetCountryField = new JTextField();
+		targetCountryField.setBounds(640, 107, 200, 30);
+		getContentPane().add(targetCountryField);
 
-        // Target Country label and field
-        JLabel targetCountryLabel = new JLabel("Enter Target Country (1-99):");
-        targetCountryLabel.setBounds(40, 141, 290, 30);
-        getContentPane().add(targetCountryLabel);
-        targetCountryField = new JTextField();
-        targetCountryField.setBounds(360, 141, 255, 30);
-        getContentPane().add(targetCountryField);
+		JLabel mmLabel = new JLabel("Enter MM:");
+		mmLabel.setBounds(480, 148, 150, 30);
+		getContentPane().add(mmLabel);
+		mmField = new JTextField();
+		mmField.setBounds(640, 148, 200, 30);
+		getContentPane().add(mmField);
 
-        // MM label and field
-        JLabel mmLabel = new JLabel("Enter MM (1-12):");
-        mmLabel.setBounds(40, 182, 290, 30);
-        getContentPane().add(mmLabel);
-        mmField = new JTextField();
-        mmField.setBounds(360, 182, 255, 30);
-        getContentPane().add(mmField);
+		JLabel ddLabel = new JLabel("Enter DD:");
+		ddLabel.setBounds(480, 189, 150, 30);
+		getContentPane().add(ddLabel);
+		ddField = new JTextField();
+		ddField.setBounds(640, 189, 200, 30);
+		getContentPane().add(ddField);
 
-        // DD label and field
-        JLabel ddLabel = new JLabel("Enter DD (1-30):");
-        ddLabel.setBounds(40, 223, 290, 30);
-        getContentPane().add(ddLabel);
-        ddField = new JTextField();
-        ddField.setBounds(360, 223, 255, 30);
-        getContentPane().add(ddField);
+		JLabel addressLabel = new JLabel("Save Directory:");
+		addressLabel.setBounds(40, 230, 150, 30);
+		getContentPane().add(addressLabel);
 
-        // Result table setup
-        tableModel = new DefaultTableModel(new Object[]{"No", "Code"}, 0);
-        resultTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(resultTable);
-        scrollPane.setBounds(20, 260, 640, 150);
-        getContentPane().add(scrollPane);
+		addressField = new JTextField("Find address");
+		addressField.setBounds(200, 230, 200, 30);
+		addressField.setEditable(false);
+		getContentPane().add(addressField);
 
-        // Generate button
-        JButton generateButton = new JButton("Generate SKU Codes");
-        generateButton.setBounds(20, 430, 200, 30);
-        generateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                generateSKUCodes();
-            }
-        });
-        getContentPane().add(generateButton);
-    }
+		JButton searchButton = new JButton("Search");
+		searchButton.setBounds(434, 230, 100, 30);
+		searchButton.addActionListener(e -> chooseSaveDirectory());
+		getContentPane().add(searchButton);
 
-    private void generateSKUCodes() {
-        int quantity;
-        try {
-            quantity = Integer.parseInt(quantityField.getText().trim());
-            if (quantity <= 0) {
-                JOptionPane.showMessageDialog(this, "Quantity must be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid quantity.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+		JButton generateButton = new JButton("Generate SKU Codes");
+		generateButton.setBounds(640, 230, 200, 30);
+		generateButton.addActionListener(e -> generateSKUCodes());
+		getContentPane().add(generateButton);
 
-        String blendingCountry = blendingCountryField.getText().trim();
-        if (!blendingCountry.matches("^[A-Z]{1,9}$")) {
-            JOptionPane.showMessageDialog(this, "Invalid Blending Country.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+		tableModel = new DefaultTableModel(new Object[] { "No", "Blending Country", "YY [2]", "Target Country",
+				"MM [2]", "Random digit [8]", "DD [2]", "SKU Code" }, 0);
+		resultTable = new JTable(tableModel);
+		JScrollPane scrollPane = new JScrollPane(resultTable);
+		scrollPane.setBounds(40, 285, 800, 200);
+		getContentPane().add(scrollPane);
+		
+		resultTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		resultTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+		resultTable.getColumnModel().getColumn(2).setPreferredWidth(20);
+		resultTable.getColumnModel().getColumn(3).setPreferredWidth(70);
+		resultTable.getColumnModel().getColumn(4).setPreferredWidth(20);
+		resultTable.getColumnModel().getColumn(5).setPreferredWidth(100);
+		resultTable.getColumnModel().getColumn(6).setPreferredWidth(20);
+		resultTable.getColumnModel().getColumn(7).setPreferredWidth(150);
+		
+		JTableHeader header = resultTable.getTableHeader();
+		DefaultTableCellRenderer headerRenderer = (DefaultTableCellRenderer) header.getDefaultRenderer();
+		headerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		JLabel lblNewLabel = new JLabel("GENERATION SKU CODE APP");
+		lblNewLabel.setBounds(40, 20, 800, 50);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 30));
+		lblNewLabel.setForeground(Color.RED);
+		getContentPane().add(lblNewLabel);
+	}
 
-        String yy = yyField.getText().trim();
-        if (!yy.matches("^\\d{1,2}$") || Integer.parseInt(yy) < 25 || Integer.parseInt(yy) > 99) {
-            JOptionPane.showMessageDialog(this, "Invalid YY.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (yy.length() == 1) {
-            yy = "0" + yy;
-        }
+	private void chooseSaveDirectory() {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnValue = fileChooser.showOpenDialog(this);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File selectedDirectory = fileChooser.getSelectedFile();
+			saveDirectory = selectedDirectory.getAbsolutePath() + "/";
+			addressField.setText(saveDirectory);
+		}
+	}
 
-        String targetCountry = targetCountryField.getText().trim();
-        if (!targetCountry.matches("^\\d{1,2}$") || Integer.parseInt(targetCountry) < 1 || Integer.parseInt(targetCountry) > 99) {
-            JOptionPane.showMessageDialog(this, "Invalid Target Country.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (targetCountry.length() == 1) {
-            targetCountry = "0" + targetCountry;
-        }
+	private void generateSKUCodes() {
+	    if (saveDirectory.isEmpty()) {
+	        JOptionPane.showMessageDialog(this, "Please select a save directory before generating SKU codes.", "Error",
+	                JOptionPane.ERROR_MESSAGE);
+	        return;
+	    }
 
-        String mm = mmField.getText().trim();
-        if (!mm.matches("^\\d{1,2}$") || Integer.parseInt(mm) < 1 || Integer.parseInt(mm) > 12) {
-            JOptionPane.showMessageDialog(this, "Invalid MM.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (mm.length() == 1) {
-            mm = "0" + mm;
-        }
+	    Set<String> uniqueStrings = new HashSet<>();
+	    int quantity = Integer.parseInt(quantityField.getText().trim());
+	    String blendingCountry = blendingCountryField.getText().trim();
+	    String yy = yyField.getText().trim();
+	    String targetCountry = String.format("%02d", Integer.parseInt(targetCountryField.getText().trim()));
+	    String mm = String.format("%02d", Integer.parseInt(mmField.getText().trim()));
+	    String dd = String.format("%02d", Integer.parseInt(ddField.getText().trim()));
 
-        String dd = ddField.getText().trim();
-        if (!dd.matches("^\\d{1,2}$") || Integer.parseInt(dd) < 1 || Integer.parseInt(dd) > 30) {
-            JOptionPane.showMessageDialog(this, "Invalid DD.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (dd.length() == 1) {
-            dd = "0" + dd;
-        }
+	    // Đảm bảo bảng có 5 dòng mặc định
+	    while (tableModel.getRowCount() < 5) {
+	        tableModel.addRow(new Object[] { "", "", "", "", "", "", "", "" });
+	    }
 
-        Set<String> uniqueStrings = new HashSet<>();
-        while (uniqueStrings.size() < quantity) {
-            String randomString = generateRandomString();
-            uniqueStrings.add(blendingCountry + yy + targetCountry + mm + randomString + dd);
-        }
+	    int index = 1;
+	    int rowCount = tableModel.getRowCount();
 
-        // Clear previous data from table
-        tableModel.setRowCount(0);
+	    // Điền dữ liệu vào 5 dòng mặc định trước
+	    for (int i = 0; i < 5 && index <= quantity; i++) {
+	        String randomCode = generateRandomString();
+	        String formattedCode = blendingCountry + yy + targetCountry + mm + randomCode + dd;
 
-        // Add new data to table
-        int index = 1;
-        for (String str : uniqueStrings) {
-            tableModel.addRow(new Object[]{index++, str});
-        }
+	        if (uniqueStrings.add(formattedCode)) {
+	            tableModel.setValueAt(index++, i, 0);
+	            tableModel.setValueAt(blendingCountry, i, 1);
+	            tableModel.setValueAt(yy, i, 2);
+	            tableModel.setValueAt(targetCountry, i, 3);
+	            tableModel.setValueAt(mm, i, 4);
+	            tableModel.setValueAt(randomCode, i, 5);
+	            tableModel.setValueAt(dd, i, 6);
+	            tableModel.setValueAt(formattedCode, i, 7);
+	        }
+	    }
 
-        // Save to file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\doant\\Downloads\\code_test_1.txt"))) {
-            for (String str : uniqueStrings) {
-                writer.write(str);
-                writer.newLine();
-            }
-            JOptionPane.showMessageDialog(this, "Strings saved to file successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error saving to file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+	    // Thêm các dòng mới nếu số lượng yêu cầu lớn hơn 5
+	    while (index <= quantity) {
+	        String randomCode = generateRandomString();
+	        String formattedCode = blendingCountry + yy + targetCountry + mm + randomCode + dd;
 
-    private static String generateRandomString() {
-        StringBuilder sb = new StringBuilder();
-        char requiredChar = REQUIRED_CHARS[random.nextInt(REQUIRED_CHARS.length)];
-        sb.append(requiredChar);
-        while (sb.length() < STRING_LENGTH) {
-            char randomChar = CHAR_POOL.charAt(random.nextInt(CHAR_POOL.length()));
-            sb.append(randomChar);
-        }
-        for (int i = STRING_LENGTH - 1; i > 0; i--) {
-            int swapIndex = random.nextInt(i + 1);
-            char temp = sb.charAt(i);
-            sb.setCharAt(i, sb.charAt(swapIndex));
-            sb.setCharAt(swapIndex, temp);
-        }
-        return sb.toString();
-    }
+	        if (uniqueStrings.add(formattedCode)) {
+	            tableModel.addRow(new Object[] { index++, blendingCountry, yy, targetCountry, mm, randomCode, dd, formattedCode });
+	        }
+	    }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            UniqueStringGeneratorGUI gui = new UniqueStringGeneratorGUI();
-            gui.setVisible(true);
-        });
-    }
+	    saveToFile(uniqueStrings);
+	}
+
+	private String generateRandomString() {
+		StringBuilder sb = new StringBuilder(STRING_LENGTH);
+		for (int i = 0; i < STRING_LENGTH; i++) {
+			sb.append(CHAR_POOL.charAt(random.nextInt(CHAR_POOL.length())));
+		}
+		return sb.toString();
+	}
+
+	private void saveToFile(Set<String> uniqueStrings) {
+		File file = new File(saveDirectory + "SKU_Codes.txt");
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+			for (String code : uniqueStrings) {
+				writer.write(code);
+				writer.newLine();
+			}
+			JOptionPane.showMessageDialog(this, "SKU codes saved successfully.", "Success",
+					JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "Error saving SKU codes to file.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(() -> {
+			UniqueStringGeneratorGUI gui = new UniqueStringGeneratorGUI();
+			gui.setVisible(true);
+		});
+	}
 }
