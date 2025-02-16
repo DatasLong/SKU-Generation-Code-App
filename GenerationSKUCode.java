@@ -77,7 +77,7 @@ public class GenerationSKUCode extends JFrame {
         yyField = createTextField(200, 189, 200, 30, "Nhập năm");
         targetCountryField = createTextField(640, 107, 200, 30, "Nhập mã quốc gia");
         targetCountryField.setEditable(false); // Vẫn giữ non-editable nếu cần
-        mmField = createTextField(640, 148, 200, 30, "Nhập tháng)");
+        mmField = createTextField(640, 148, 200, 30, "Nhập tháng");
         ddField = createTextField(640, 189, 200, 30, "Nhập ngày");
         addressField = createTextField(200, 230, 200, 30, "");
         addressField.setEditable(false);
@@ -163,17 +163,17 @@ public class GenerationSKUCode extends JFrame {
      * - Nút "Search" (cho chọn file chứa mã 8 ký tự)
      */
     private void setupButtons() {
-        JButton searchButton = new JButton("Search");
+        JButton searchButton = new JButton("Tìm");
         searchButton.setBounds(434, 230, 100, 30);
         searchButton.addActionListener(e -> chooseSaveDirectory());
         getContentPane().add(searchButton);
 
-        JButton generateButton = new JButton("Generate SKU Codes");
+        JButton generateButton = new JButton("tạo mã SKU");
         generateButton.setBounds(640, 230, 200, 30);
         generateButton.addActionListener(e -> generateSKUCodes());
         getContentPane().add(generateButton);
 
-        JButton randomFileButton = new JButton("Search");
+        JButton randomFileButton = new JButton("Tìm");
         randomFileButton.setBounds(434, 270, 100, 30);
         randomFileButton.addActionListener(e -> chooseRandom8DigitFile());
         getContentPane().add(randomFileButton);
@@ -192,7 +192,7 @@ public class GenerationSKUCode extends JFrame {
         addLabel("Mã quốc gia:", 480, 107, 150, 30);
         addLabel("Nhập năm:", 480, 148, 150, 30);
         addLabel("Nhập ngày:", 480, 189, 150, 30);
-        addLabel("Nhập địa chỉ lưu mã SKU:", 40, 230, 150, 30);
+        addLabel("Lưu mã SKU:", 40, 230, 150, 30);
 
         JLabel titleLabel = new JLabel("CHƯƠNG TRÌNH TẠO MÃ SKU");
         titleLabel.setBounds(40, 20, 800, 50);
@@ -201,7 +201,7 @@ public class GenerationSKUCode extends JFrame {
         titleLabel.setForeground(Color.RED);
         getContentPane().add(titleLabel);
 
-        addLabel("Nhập địa chỉ mã random 8 ký tự:", 40, 270, 150, 30);
+        addLabel("Lưu mã random 8 ký tự:", 40, 270, 150, 30);
     }
 
     /**
