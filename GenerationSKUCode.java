@@ -55,7 +55,7 @@ public class GenerationSKUCode extends JFrame {
      */
     private void setupFrame() {
         getContentPane().setBackground(Color.WHITE);
-        setTitle("SKU Generation Application");
+        // setTitle("SKU Generation Application");
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
@@ -72,31 +72,50 @@ public class GenerationSKUCode extends JFrame {
      *   tháng (MM), ngày (DD), địa chỉ lưu file SKU, và file chứa mã 8 ký tự.
      */
     private void setupInputFields() {
-        quantityField = createTextField(200, 107, 200, 30);
-        blendingCountryField = createTextField(200, 148, 200, 30);
-        yyField = createTextField(200, 189, 200, 30);
-        targetCountryField = createTextField(640, 107, 200, 30);
-        targetCountryField.setEditable(false);
-        mmField = createTextField(640, 148, 200, 30);
-        ddField = createTextField(640, 189, 200, 30);
-        addressField = createTextField(200, 230, 200, 30);
+        quantityField = createTextField(200, 107, 200, 30, "Nhập số lượng");
+        blendingCountryField = createTextField(200, 148, 200, 30, "Nhập mã quốc gia");
+        yyField = createTextField(200, 189, 200, 30, "Nhập năm");
+        targetCountryField = createTextField(640, 107, 200, 30, "Nhập mã quốc gia");
+        targetCountryField.setEditable(false); // Vẫn giữ non-editable nếu cần
+        mmField = createTextField(640, 148, 200, 30, "Nhập tháng)");
+        ddField = createTextField(640, 189, 200, 30, "Nhập ngày");
+        addressField = createTextField(200, 230, 200, 30, "");
         addressField.setEditable(false);
-        random8DigitField = createTextField(200, 270, 200, 30);
-        random8DigitField.setEditable(false);
+        random8DigitField = createTextField(200, 270, 200, 30, "");
+        random8DigitField.setEditable(false); // Không cho phép nhập liệu
     }
 
     /**
-     * Tạo một JTextField tại vị trí (x, y) với kích thước (width, height) và thêm vào cửa sổ.
+     * Tạo một JTextField với placeholder.
      *
-     * @param x      Tọa độ x của trường nhập.
-     * @param y      Tọa độ y của trường nhập.
-     * @param width  Chiều rộng của trường nhập.
-     * @param height Chiều cao của trường nhập.
+     * @param x          Tọa độ x của trường nhập.
+     * @param y          Tọa độ y của trường nhập.
+     * @param width      Chiều rộng của trường nhập.
+     * @param height     Chiều cao của trường nhập.
+     * @param placeholder Văn bản gợi ý khi chưa có dữ liệu.
      * @return Trả về JTextField đã được tạo.
      */
-    private JTextField createTextField(int x, int y, int width, int height) {
+    private JTextField createTextField(int x, int y, int width, int height, String placeholder) {
         JTextField textField = new JTextField();
         textField.setBounds(x, y, width, height);
+        textField.setText(placeholder);
+        textField.setForeground(Color.GRAY);
+        textField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if(textField.getText().equals(placeholder)) {
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if(textField.getText().isEmpty()) {
+                    textField.setText(placeholder);
+                    textField.setForeground(Color.GRAY);
+                }
+            }
+        });
         getContentPane().add(textField);
         return textField;
     }
@@ -146,19 +165,16 @@ public class GenerationSKUCode extends JFrame {
     private void setupButtons() {
         JButton searchButton = new JButton("Search");
         searchButton.setBounds(434, 230, 100, 30);
-        // Gọi hàm chooseSaveDirectory() khi nút được nhấn
         searchButton.addActionListener(e -> chooseSaveDirectory());
         getContentPane().add(searchButton);
 
         JButton generateButton = new JButton("Generate SKU Codes");
         generateButton.setBounds(640, 230, 200, 30);
-        // Gọi hàm generateSKUCodes() khi nút được nhấn
         generateButton.addActionListener(e -> generateSKUCodes());
         getContentPane().add(generateButton);
 
         JButton randomFileButton = new JButton("Search");
         randomFileButton.setBounds(434, 270, 100, 30);
-        // Gọi hàm chooseRandom8DigitFile() khi nút được nhấn
         randomFileButton.addActionListener(e -> chooseRandom8DigitFile());
         getContentPane().add(randomFileButton);
     }
@@ -170,22 +186,22 @@ public class GenerationSKUCode extends JFrame {
      * Cài đặt các nhãn hiển thị cho giao diện.
      */
     private void setupLabels() {
-        addLabel("Enter Quantity:", 40, 107, 150, 30);
-        addLabel("Enter Blending Country:", 40, 148, 150, 30);
-        addLabel("Enter YY:", 40, 189, 150, 30);
-        addLabel("Target Country:", 480, 107, 150, 30);
-        addLabel("Enter MM:", 480, 148, 150, 30);
-        addLabel("Enter DD:", 480, 189, 150, 30);
-        addLabel("Enter SKU code save directory:", 40, 230, 150, 30);
+        addLabel("Nhập số lượng:", 40, 107, 150, 30);
+        addLabel("Nhập mã quốc gia:", 40, 148, 150, 30);
+        addLabel("Nhập năm:", 40, 189, 150, 30);
+        addLabel("Mã quốc gia:", 480, 107, 150, 30);
+        addLabel("Nhập năm:", 480, 148, 150, 30);
+        addLabel("Nhập ngày:", 480, 189, 150, 30);
+        addLabel("Nhập địa chỉ lưu mã SKU:", 40, 230, 150, 30);
 
-        JLabel titleLabel = new JLabel("SKU CODE GENERATION APPLICATION");
+        JLabel titleLabel = new JLabel("CHƯƠNG TRÌNH TẠO MÃ SKU");
         titleLabel.setBounds(40, 20, 800, 50);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
         titleLabel.setForeground(Color.RED);
         getContentPane().add(titleLabel);
 
-        addLabel("8-digit File:", 40, 270, 150, 30);
+        addLabel("Nhập địa chỉ mã random 8 ký tự:", 40, 270, 150, 30);
     }
 
     /**
@@ -281,7 +297,7 @@ public class GenerationSKUCode extends JFrame {
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
-                "Error reading 8-character code file.",
+                "Không tìm thấy file random 8 ký tự.",
                 "Error", JOptionPane.ERROR_MESSAGE);
         }
         return codes;
@@ -296,13 +312,13 @@ public class GenerationSKUCode extends JFrame {
     private void generateSKUCodes() {
         if (saveDirectory == null || saveDirectory.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                "Please select a save directory before generating SKU codes.",
+                "Làm ơn chọn địa chỉ lưu mã SKU!.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (randomFilePath == null || randomFilePath.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                "Please select 8-digit file!",
+                "Làm ơn chọn địa chỉ lưu mã random 8 ký tự!",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -311,13 +327,13 @@ public class GenerationSKUCode extends JFrame {
             quantity = Integer.parseInt(quantityField.getText().trim());
             if (quantity <= 0) {
                 JOptionPane.showMessageDialog(this,
-                    "Quantity must be greater than 0!",
+                    "Số lượng phải lớn hơn 0!",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                "Please enter a valid quantity (number).",
+                "Số lượng phải là số.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -325,7 +341,7 @@ public class GenerationSKUCode extends JFrame {
         String blendingCountry = blendingCountryField.getText().trim();
         if (blendingCountry.isEmpty() || blendingCountry.length() > 9 || !blendingCountry.matches("[A-Z]*")) {
             JOptionPane.showMessageDialog(this,
-                "Blending Country must be uppercase letters and up to 9 characters.",
+                "Mã quốc gia phải là chữ hoa và tối đa là 9 ký tự.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -335,13 +351,13 @@ public class GenerationSKUCode extends JFrame {
             int yyInt = Integer.parseInt(yy);
             if (yyInt < 25 || yyInt > 99) {
                 JOptionPane.showMessageDialog(this,
-                    "YY must be a number between 25 and 99.",
+                    "Năm phải từ 25 - 99.",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                "YY must be a valid number between 25 and 99.",
+                "Năm phải là số.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -351,14 +367,14 @@ public class GenerationSKUCode extends JFrame {
             int mmInt = Integer.parseInt(mm);
             if (mmInt < 1 || mmInt > 12) {
                 JOptionPane.showMessageDialog(this,
-                    "MM must be a number between 01 and 12.",
+                    "Tháng phải từ 1 - 12.",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             mm = formatToTwoDigits(mm);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                "MM must be a valid number between 01 and 12.",
+                "Tháng phải là sốsố.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -368,14 +384,14 @@ public class GenerationSKUCode extends JFrame {
             int ddInt = Integer.parseInt(dd);
             if (ddInt < 1 || ddInt > 31) {
                 JOptionPane.showMessageDialog(this,
-                    "DD must be a number between 01 and 31.",
+                    "Ngày phải từ 1 - 31.",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             dd = formatToTwoDigits(dd);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                "DD must be a valid number between 01 and 31.",
+                "Ngày phải là số.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -413,7 +429,7 @@ public class GenerationSKUCode extends JFrame {
 
         if (index <= quantity) {
             JOptionPane.showMessageDialog(this,
-                "Not enough 8-digit codes in the selected file!\n" +
+                "Không tìm thấy file random mã 8 ký tự!\n" +
                 "Generated only " + (index - 1) + " codes.",
                 "Warning", JOptionPane.WARNING_MESSAGE);
         }
@@ -474,11 +490,11 @@ public class GenerationSKUCode extends JFrame {
                 writer.write(code);
                 writer.newLine();
             }
-            JOptionPane.showMessageDialog(this, "SKU codes saved successfully.",
+            JOptionPane.showMessageDialog(this, "Mã SKU đã được tạo thành công.",
                 "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
-                "Error saving SKU codes to file.",
+                "Không thể tạo mã SKU.",
                 "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
