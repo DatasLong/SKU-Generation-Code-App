@@ -72,13 +72,13 @@ public class GenerationSKUCode extends JFrame {
      *   tháng (MM), ngày (DD), địa chỉ lưu file SKU, và file chứa mã 8 ký tự.
      */
     private void setupInputFields() {
-        quantityField = createTextField(200, 107, 200, 30, "Nhập số lượng");
-        blendingCountryField = createTextField(200, 148, 200, 30, "Nhập mã quốc gia");
-        yyField = createTextField(200, 189, 200, 30, "Nhập năm");
-        targetCountryField = createTextField(640, 107, 200, 30, "Nhập mã quốc gia");
+        quantityField = createTextField(200, 107, 200, 30, "Quantity");
+        blendingCountryField = createTextField(200, 148, 200, 30, "Blending Country/ Target Country");
+        yyField = createTextField(200, 189, 200, 30, "YY");
+        targetCountryField = createTextField(640, 107, 200, 30, "Blending Country/ Target Country");
         targetCountryField.setEditable(false); // Vẫn giữ non-editable nếu cần
-        mmField = createTextField(640, 148, 200, 30, "Nhập tháng");
-        ddField = createTextField(640, 189, 200, 30, "Nhập ngày");
+        mmField = createTextField(640, 148, 200, 30, "MM");
+        ddField = createTextField(640, 189, 200, 30, "DD");
         addressField = createTextField(200, 230, 200, 30, "");
         addressField.setEditable(false);
         random8DigitField = createTextField(200, 270, 200, 30, "");

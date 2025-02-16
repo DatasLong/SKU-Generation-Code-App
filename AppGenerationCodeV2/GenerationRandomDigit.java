@@ -56,6 +56,25 @@ public class GenerationRandomDigit extends JFrame {
         
         quantityField = new JTextField();
         quantityField.setBounds(200, 107, 200, 30);
+        // Thiết lập placeholder "Quantity" sử dụng FocusListener
+        quantityField.setForeground(Color.GRAY);
+        quantityField.setText("Quantity");
+        quantityField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if(quantityField.getText().equals("Quantity")) {
+                    quantityField.setText("");
+                    quantityField.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if(quantityField.getText().trim().isEmpty()) {
+                    quantityField.setText("Quantity");
+                    quantityField.setForeground(Color.GRAY);
+                }
+            }
+        });
         getContentPane().add(quantityField);
         
         // Label "Nhập địa chỉ lưu:" và trường nhập địa chỉ lưu
@@ -159,6 +178,12 @@ public class GenerationRandomDigit extends JFrame {
             quantity = Integer.parseInt(quantityField.getText().trim());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Làm ơn nhập số lượnglượng.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Validation: số lượng phải lớn hơn 0
+        if (quantity <= 0) {
+            JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
