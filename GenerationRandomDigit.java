@@ -26,54 +26,66 @@ public class GenerationRandomDigit extends JFrame {
     
     // Constructor: Khởi tạo frame và giao diện người dùng
     public GenerationRandomDigit() {
+    	getContentPane().setBackground(new Color(255, 255, 255));
         setupFrame();
         setupUI();
     }
     
-    // Cài đặt thuộc tính chính của frame
+    // Cài đặt thuộc tính chính của frame (theo file SKU: 900×600)
     private void setupFrame() {
-        setSize(500, 300);
+        setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
+        getContentPane().setLayout(null);
         setLocationRelativeTo(null);
     }
     
-    // Cài đặt các thành phần giao diện người dùng
+    // Cài đặt các thành phần giao diện người dùng theo phong cách của GenerationSKUCode.java
     private void setupUI() {
+        // Title Label
+        JLabel titleLabel = new JLabel("CHƯƠNG TRÌNH TẠO CODE 8 KÝ TỰ");
+        titleLabel.setBounds(40, 20, 800, 50);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        titleLabel.setForeground(Color.RED);
+        getContentPane().add(titleLabel);
+        
+        // Label "Nhập số lượng:" và trường nhập số lượng
         JLabel quantityLabel = new JLabel("Nhập số lượng:");
-        quantityLabel.setBounds(50, 50, 100, 30);
-        add(quantityLabel);
+        quantityLabel.setBounds(40, 107, 150, 30);
+        getContentPane().add(quantityLabel);
         
         quantityField = new JTextField();
-        quantityField.setBounds(160, 50, 100, 30);
-        add(quantityField);
+        quantityField.setBounds(200, 107, 200, 30);
+        getContentPane().add(quantityField);
         
-        JLabel directoryLabel = new JLabel("Nhập vị trí lưu:");
-        directoryLabel.setBounds(50, 100, 100, 30);
-        add(directoryLabel);
+        // Label "Nhập địa chỉ lưu:" và trường nhập địa chỉ lưu
+        JLabel directoryLabel = new JLabel("Nhập địa chỉ lưu:");
+        directoryLabel.setBounds(40, 148, 150, 30);
+        getContentPane().add(directoryLabel);
         
         addressField = new JTextField();
-        addressField.setBounds(160, 100, 200, 30);
+        addressField.setBounds(200, 148, 200, 30);
         addressField.setEditable(false);
-        add(addressField);
+        getContentPane().add(addressField);
         
+        // Nút "Tìm kiếm" để chọn thư mục lưu, bên cạnh trường địa chỉ
         JButton searchButton = new JButton("Tìm kiếm");
-        searchButton.setBounds(370, 100, 80, 30);
+        searchButton.setBounds(434, 148, 100, 30);
         searchButton.addActionListener(e -> chooseSaveDirectory());
-        add(searchButton);
+        getContentPane().add(searchButton);
         
+        // Nút "Tạo code" đặt theo file SKU (ở cùng hàng với trường địa chỉ lưu)
         JButton generateButton = new JButton("Tạo code");
-        generateButton.setBounds(160, 150, 100, 30);
+        generateButton.setBounds(640, 148, 200, 30);
         generateButton.addActionListener(e -> generateCodes());
-        add(generateButton);
+        getContentPane().add(generateButton);
         
-        // --- THÊM: Tạo JTable hiển thị các code đã tạo ---
-        // Bây giờ có 2 cột: "No" và "Code"
-        codeTableModel = new javax.swing.table.DefaultTableModel(new Object[]{"No", "Code"}, 0);
+        // JTable hiển thị các code đã tạo, đặt dưới khoảng cách phù hợp như file SKU
+        codeTableModel = new javax.swing.table.DefaultTableModel(new Object[]{"No", "Random digit [8]"}, 0);
         codeTable = new JTable(codeTableModel);
         JScrollPane scrollPane = new JScrollPane(codeTable);
-        scrollPane.setBounds(50, 190, 400, 70); // Điều chỉnh kích thước sao cho vừa trong frame
-        add(scrollPane);
+        scrollPane.setBounds(40, 203, 800, 325);
+        getContentPane().add(scrollPane);
     }
     
     // Cho phép người dùng chọn thư mục lưu
@@ -129,9 +141,9 @@ public class GenerationRandomDigit extends JFrame {
                 writer.write(code);
                 writer.newLine();
             }
-            JOptionPane.showMessageDialog(this, "Tạo code thành công.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tạo mã thành công.", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Tạo code thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tạo mã thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -155,7 +167,7 @@ public class GenerationRandomDigit extends JFrame {
             codes.add(generateRandomString());
         }
         
-        // --- THÊM: Cập nhật JTable hiển thị các code với cột "No" ---
+        // Cập nhật JTable hiển thị các code với cột "No"
         codeTableModel.setRowCount(0);
         int no = 1;
         for (String code : codes) {

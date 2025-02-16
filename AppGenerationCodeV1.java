@@ -32,7 +32,6 @@ public class AppGenerationCodeV1 extends JFrame {
 
     private void setupFrame() {
         getContentPane().setBackground(new Color(255, 255, 255));
-        setTitle("SKU Generation Application");
         setSize(900, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
@@ -72,27 +71,27 @@ public class AppGenerationCodeV1 extends JFrame {
     }
 
     private void setupButtons() {
-        JButton searchButton = new JButton("Search");
+        JButton searchButton = new JButton("Tìm");
         searchButton.setBounds(434, 230, 100, 30);
         searchButton.addActionListener(e -> chooseSaveDirectory());
         getContentPane().add(searchButton);
 
-        JButton generateButton = new JButton("Generate SKU Codes");
+        JButton generateButton = new JButton("Tạo mã SKU");
         generateButton.setBounds(640, 230, 200, 30);
         generateButton.addActionListener(e -> generateSKUCodes());
         getContentPane().add(generateButton);
     }
 
     private void setupLabels() {
-        addLabel("Enter Quantity:", 40, 107, 150, 30);
-        addLabel("Enter Blending Country:", 40, 148, 150, 30);
-        addLabel("Enter YY:", 40, 189, 150, 30);
-        addLabel("Target Country:", 480, 107, 150, 30);
-        addLabel("Enter MM:", 480, 148, 150, 30);
-        addLabel("Enter DD:", 480, 189, 150, 30);
-        addLabel("Save Directory:", 40, 230, 150, 30);
+        addLabel("Nhập số lượng:", 40, 107, 150, 30);
+        addLabel("Nhập mã quốc gia:", 40, 148, 150, 30);
+        addLabel("Nhập năm:", 40, 189, 150, 30);
+        addLabel("Mã quốc gia:", 480, 107, 150, 30);
+        addLabel("Nhập tháng:", 480, 148, 150, 30);
+        addLabel("Nhập ngày:", 480, 189, 150, 30);
+        addLabel("Chọn địa chỉ lưu:", 40, 230, 150, 30);
 
-        JLabel titleLabel = new JLabel("GENERATION SKU CODE APP");
+        JLabel titleLabel = new JLabel("PHẦN MỀM TẠO MÃ SKU");
         titleLabel.setBounds(40, 20, 800, 50);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
@@ -168,7 +167,7 @@ public class AppGenerationCodeV1 extends JFrame {
         // Kiểm tra thư mục lưu
         if (saveDirectory == null || saveDirectory.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                "Please select a save directory before generating SKU codes.",
+                "làm ơn chọn ổ đĩa lưu mã SKU.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -178,13 +177,13 @@ public class AppGenerationCodeV1 extends JFrame {
             quantity = Integer.parseInt(quantityField.getText().trim());
             if (quantity <= 0) {
                 JOptionPane.showMessageDialog(this,
-                    "Quantity must be greater than 0!",
+                    "Số lượng phải > 0!",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                "Please enter a valid quantity (number).",
+                "Số lượng phải là số.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -192,7 +191,7 @@ public class AppGenerationCodeV1 extends JFrame {
         String blendingCountry = blendingCountryField.getText().trim();
         if (blendingCountry.isEmpty() || blendingCountry.length() > 9 || !blendingCountry.matches("[A-Z]*")) {
             JOptionPane.showMessageDialog(this,
-                "Blending Country must be uppercase letters and up to 9 characters.",
+                "mã quốc gia phải là chữ in hoa và <=9 ký tự.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -202,13 +201,13 @@ public class AppGenerationCodeV1 extends JFrame {
             int yyInt = Integer.parseInt(yy);
             if (yyInt < 25 || yyInt > 99) {
                 JOptionPane.showMessageDialog(this,
-                    "YY must be a number between 25 and 99.",
+                    "Năm phải nằm trong 25 - 99.",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                "YY must be a valid number between 25 and 99.",
+                "Năm phải là số.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -218,14 +217,14 @@ public class AppGenerationCodeV1 extends JFrame {
             int mmInt = Integer.parseInt(mm);
             if (mmInt < 1 || mmInt > 12) {
                 JOptionPane.showMessageDialog(this,
-                    "MM must be a number between 01 and 12.",
+                    "Tháng phải từ 1 - 12.",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             mm = formatToTwoDigits(mm);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                "MM must be a valid number between 01 and 12.",
+                "Tháng phải là số.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -235,14 +234,14 @@ public class AppGenerationCodeV1 extends JFrame {
             int ddInt = Integer.parseInt(dd);
             if (ddInt < 1 || ddInt > 31) {
                 JOptionPane.showMessageDialog(this,
-                    "DD must be a number between 01 and 31.",
+                    "Ngày phải là số nằm trong 1 -31.",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             dd = formatToTwoDigits(dd);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                "DD must be a valid number between 01 and 31.",
+                "Ngày phải là số.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -278,9 +277,9 @@ public class AppGenerationCodeV1 extends JFrame {
                 writer.write(code);
                 writer.newLine();
             }
-            JOptionPane.showMessageDialog(this, "SKU codes saved successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tạo mã SKU thành công.", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error saving SKU codes to file.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tạo mã SKU thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
